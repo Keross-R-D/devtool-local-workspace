@@ -1,0 +1,43 @@
+{
+    // Set the color theme
+    "workbench.colorTheme": "GitHub Dark Default",
+	
+    // Set the icon theme (optional)
+    "workbench.iconTheme": "material-icon-theme",
+
+    // Font settings
+    "editor.fontFamily": "Fira Code, monospace",
+    "editor.fontSize": 14,
+    "editor.lineHeight": 22,
+    "editor.fontLigatures": true,
+
+    // Enable format on save
+    "editor.formatOnSave": true,
+
+    // Enable auto-save (options: "off", "afterDelay", "onFocusChange", "onWindowChange")
+    "files.autoSave": "afterDelay",
+    "files.autoSaveDelay": 1000,
+
+    // Tab settings
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+
+    // Enable minimap
+    "editor.minimap.enabled": true,
+
+    // Terminal settings
+    "terminal.integrated.fontSize": 14,
+
+    // Extensions recommendations
+    "extensions.ignoreRecommendations": false,
+
+    // Other settings you may find useful
+    "workbench.startupEditor": "newUntitledFile",
+    "workbench.statusBar.visible": true,
+    "workbench.activityBar.visible": true,
+
+    // Example of setting a specific language configuration
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    }
+}

@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  dev-tools:
+    build:
+      context: ./remote_vscode
+    restart: unless-stopped
+    volumes:
+      - ./workspace:/workspace
+      - ./ssh:/root/.ssh
+    networks:
+      - dev-network
+    
+    ports:
+      - 8080:8080
+      - 2990-3009:2990-3009
+      - 8070-8079:8070-8079
+
+  openresty:
+    image: openresty/openresty:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+    networks:
+      - dev-network
+
+networks:
+  dev-network:
+    driver: bridge
