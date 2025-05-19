@@ -38,6 +38,7 @@ RUN mkdir -p /temp
 RUN code-server --install-extension dracula-theme.theme-dracula
 RUN code-server --install-extension esbenp.prettier-vscode
 RUN code-server --install-extension eamodio.gitlens
+RUN code-server --install-extension ms-azuretools.vscode-docker
 # RUN code-server --install-extension /temp/ikonextension-0.0.1.vsix
 # RUN code-server --install-extension /temp/ikon-next-preview-0.0.1.vsix
 

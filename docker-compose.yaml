@@ -8,6 +8,7 @@ services:
     volumes:
       - ./workspace:/workspace
       - ./ssh:/root/.ssh
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-network
     
