@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
 RUN apt-get update && \
-    apt-get install -y curl git && \
+    apt-get install -y curl git docker.io&& \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install the latest version of code-server
