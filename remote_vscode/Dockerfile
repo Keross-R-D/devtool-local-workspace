@@ -6,7 +6,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # Install necessary dependencies
 RUN apt-get update && \
-    apt-get install -y curl git docker.io&& \
+    apt-get install -y curl git docker.io snoopy rsyslog && \
     rm -rf /var/lib/apt/lists/*
 
 # Download and install the latest version of code-server
@@ -47,5 +47,15 @@ COPY settings.json /root/.config/code-server/settings.json
 
 # ENV VSCODE_PROXY_URI=http://localhost:{{port}}/
 ENV CODE_SERVER_PROXY_DOMAIN=localhost
+
+# Setup scoopy and rsyslog
+COPY ./snoopy/snoopy.ini /etc/snoopy.ini
+RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+COPY ./rsyslog/60-snoopy.conf /etc/rsyslog.d/60-snoopy.conf
+RUN service rsyslog restart
+
+# Create .so library to make sure snoppy captures log
+RUN echo '/lib/x86_64-linux-gnu/libsnoopy.so' | tee /etc/ld.so.preload
+
 # Set code-server to run on port 8080
 CMD ["code-server", "--bind-addr", "0.0.0.0:8080","--auth", "none","--proxy-domain", "localhost","/workspace"]
