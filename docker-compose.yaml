@@ -6,7 +6,7 @@ services:
       context: ./remote_vscode
     restart: unless-stopped
     volumes:
-      - ./workspace:/workspace
+      - workspace:/workspace
       - ./ssh:/root/.ssh
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
@@ -79,3 +79,4 @@ networks:
 
 volumes:
   elasticsearch-data:
+  workspace:
