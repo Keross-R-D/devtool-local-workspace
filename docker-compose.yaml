@@ -11,7 +11,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - dev-network
-    
+    privileged: true
     ports:
       - 8080:8080
       - 2990-3009:2990-3009

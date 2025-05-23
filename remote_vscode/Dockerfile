@@ -10,8 +10,18 @@ ENV JAVA_INSTALL_DIR=/opt/java
 
 # Install necessary dependencies
 RUN apt-get update && \
-    apt-get install -y curl git docker.io snoopy rsyslog tar ca-certificates && \
+    apt-get install -y curl git docker.io rsyslog tar ca-certificates zsh && \
     rm -rf /var/lib/apt/lists/*
+
+#install oh-my-zsh
+RUN sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install zsh plugins
+RUN git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions
+RUN git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting
+
+# copy the .zshrc
+COPY ./.zshrc /root/.zshrc
 
 # Download and install Eclipse Temurin JDK
 RUN set -e; \
@@ -35,10 +45,10 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # Ensure JAVA_HOME and PATH are set in .bashrc for interactive shells started by code-server
 # This is a robust way to ensure the terminal in VS Codium gets the correct PATH.
-RUN echo '' >> /root/.bashrc && \
-    echo '# Set JAVA_HOME and add to PATH for Java' >> /root/.bashrc && \
-    echo "export JAVA_HOME=${JAVA_INSTALL_DIR}" >> /root/.bashrc && \
-    echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> /root/.bashrc
+COPY ./.bashrc /root/.bashrc
+
+# set default shell as bash [DO NOT ALTER BASH CREATES THE LOGGER AND REDIRECTS TO ZSH OTHERWISE LOGGER WONT WORK]
+RUN chsh -s /bin/bash 
 
 # Download and install the latest version of code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
@@ -66,13 +76,13 @@ RUN mkdir -p /temp
 # COPY ikon-next-preview-0.0.1.vsix /temp/ikon-next-preview-0.0.1.vsix
 
 # Install VS Code extensions
-RUN code-server --install-extension dracula-theme.theme-dracula && \
-    code-server --install-extension esbenp.prettier-vscode && \
-    code-server --install-extension eamodio.gitlens && \
-    code-server --install-extension ms-azuretools.vscode-docker && \
-    code-server --install-extension vscjava.vscode-java-pack && \
-    code-server --install-extension vmware.vscode-spring-boot && \
-    code-server --install-extension bradlc.vscode-tailwindcss
+RUN code-server --install-extension dracula-theme.theme-dracula
+RUN code-server --install-extension esbenp.prettier-vscode
+RUN code-server --install-extension eamodio.gitlens
+RUN code-server --install-extension ms-azuretools.vscode-docker
+RUN code-server --install-extension vscjava.vscode-java-pack
+RUN code-server --install-extension vmware.vscode-spring-boot
+RUN code-server --install-extension bradlc.vscode-tailwindcss
 # RUN code-server --install-extension /temp/ikonextension-0.0.1.vsix
 # RUN code-server --install-extension /temp/ikon-next-preview-0.0.1.vsix
 
@@ -83,13 +93,9 @@ COPY settings.json /root/.config/code-server/settings.json
 ENV CODE_SERVER_PROXY_DOMAIN=localhost
 
 # Setup scoopy and rsyslog
-COPY ./snoopy/snoopy.ini /etc/snoopy.ini
 RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
-COPY ./rsyslog/60-snoopy.conf /etc/rsyslog.d/60-snoopy.conf
-RUN service rsyslog restart
-
-# Create .so library to make sure snoppy captures log
-RUN echo '/lib/x86_64-linux-gnu/libsnoopy.so' | tee /etc/ld.so.preload
+COPY ./rsyslog/60-term.conf /etc/rsyslog.d/60-term.conf
+# RUN rsyslogd
 
 # Set code-server to run on port 8080
 CMD ["code-server", "--bind-addr", "0.0.0.0:8080","--auth", "none","--proxy-domain", "localhost","/workspace"]
