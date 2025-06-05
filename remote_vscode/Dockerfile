@@ -48,7 +48,7 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 COPY ./.bashrc /root/.bashrc
 
 # set default shell as bash [DO NOT ALTER BASH CREATES THE LOGGER AND REDIRECTS TO ZSH OTHERWISE LOGGER WONT WORK]
-RUN chsh -s /bin/bash 
+RUN chsh -s /bin/zsh 
 
 # Download and install the latest version of code-server
 RUN curl -fsSL https://code-server.dev/install.sh | sh
@@ -93,9 +93,11 @@ COPY settings.json /root/.config/code-server/settings.json
 ENV CODE_SERVER_PROXY_DOMAIN=localhost
 
 # Setup scoopy and rsyslog
-RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
-COPY ./rsyslog/60-term.conf /etc/rsyslog.d/60-term.conf
+# RUN sed -i '/imklog/s/^/#/' /etc/rsyslog.conf
+# COPY ./rsyslog/60-term.conf /etc/rsyslog.d/60-term.conf
 # RUN rsyslogd
+
+
 
 # Set code-server to run on port 8080
 CMD ["code-server", "--bind-addr", "0.0.0.0:8080","--auth", "none","--proxy-domain", "localhost","/workspace"]
