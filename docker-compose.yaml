@@ -2,8 +2,7 @@ version: '3'
 
 services:
   dev-tools:
-    build:
-      context: ./remote_vscode
+    image: souvikmondalkeross/remote_code_server:latest
     restart: unless-stopped
     volumes:
       - workspace:/workspace
